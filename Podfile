@@ -8,6 +8,7 @@ target 'RadioPal' do
   # Pods for RadioPal
   pod ‘Alamofire’
   pod ‘AlamofireImage’
+  pod 'SnapKit', '~> 3.2.0'
   
 
 end
