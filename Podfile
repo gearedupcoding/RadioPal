@@ -6,7 +6,6 @@ target 'RadioPal' do
   use_frameworks!
 
   # Pods for RadioPal
-  pod ’SnapKit’
   pod ‘Alamofire’
   pod ‘AlamofireImage’
   
