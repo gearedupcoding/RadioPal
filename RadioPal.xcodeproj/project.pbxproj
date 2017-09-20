@@ -13,6 +13,7 @@
 		673E32721F72FA900062333A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 673E32711F72FA900062333A /* Assets.xcassets */; };
 		673E32751F72FA900062333A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 673E32731F72FA900062333A /* LaunchScreen.storyboard */; };
 		673E327D1F7319280062333A /* countries.json in Resources */ = {isa = PBXBuildFile; fileRef = 673E327C1F7319280062333A /* countries.json */; };
+		673E32801F731BBD0062333A /* GenreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E327F1F731BBD0062333A /* GenreModel.swift */; };
 		D49E25C55E194BD26FE5E2C6 /* Pods_RadioPal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 		673E32761F72FA900062333A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		673E327C1F7319280062333A /* countries.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = countries.json; path = Resources/countries.json; sourceTree = "<group>"; };
 		673E327E1F731B4A0062333A /* genres.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = genres.json; path = Resources/genres.json; sourceTree = "<group>"; };
+		673E327F1F731BBD0062333A /* GenreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreModel.swift; sourceTree = "<group>"; };
 		94454098E7F419737857B3D3 /* Pods-RadioPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.release.xcconfig"; sourceTree = "<group>"; };
 		BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioPal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1D6288D9743B61FA93917A /* Pods-RadioPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.debug.xcconfig"; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 		673E32691F72FA900062333A /* RadioPal */ = {
 			isa = PBXGroup;
 			children = (
+				673E32811F731BC20062333A /* Models */,
 				673E326A1F72FA900062333A /* AppDelegate.swift */,
 				673E326C1F72FA900062333A /* ViewController.swift */,
 				673E326E1F72FA900062333A /* Main.storyboard */,
@@ -74,6 +77,15 @@
 				673E327E1F731B4A0062333A /* genres.json */,
 			);
 			path = RadioPal;
+			sourceTree = "<group>";
+		};
+		673E32811F731BC20062333A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				673E327F1F731BBD0062333A /* GenreModel.swift */,
+			);
+			name = Models;
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 		6A8AC073D3715584CD6D30C1 /* Pods */ = {
@@ -172,15 +184,11 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
 			);
@@ -229,6 +237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				673E32801F731BBD0062333A /* GenreModel.swift in Sources */,
 				673E326D1F72FA900062333A /* ViewController.swift in Sources */,
 				673E326B1F72FA900062333A /* AppDelegate.swift in Sources */,
 			);

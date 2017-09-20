@@ -10,7 +10,6 @@ import UIKit
 import SnapKit
 import Then
 import Speech
-import Alamofire
 
 @available(iOS 10.0, *)
 class ViewController: UIViewController {
@@ -30,6 +29,7 @@ class ViewController: UIViewController {
         self.setupUI()
         self.speechRecognizer?.delegate = self
         self.requestAuthorization()
+        self.getGenres()
     }
     
     private func setupUI() {
@@ -69,8 +69,9 @@ class ViewController: UIViewController {
             $0.setImage(micImage, for: .normal)
             $0.addTarget(self, action: #selector(micBtnPressed(_:)), for: .touchUpInside)
             $0.snp.makeConstraints({ (make) in
-                make.centerY.equalTo(self.view)
+                make.centerX.equalTo(self.view)
                 make.height.width.equalTo((micImage?.size.width)!)
+                make.bottom.equalTo(self.view).offset(-20)
             })
         }
         self.micBtn.isEnabled = false
@@ -199,6 +200,38 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: SFSpeechRecognizerDelegate {
+    func getGenres() {
+        print(readJson(name: "genres"))
+        //let json = JSON(parseJSON: jsonString!)
+    }
     
+    func getCountries() {
+        
+    }
+    
+    private func readJson(name: String) -> [Any]? {
+        var returnObject = [Any]()
+        do {
+            if let file = Bundle.main.url(forResource: name, withExtension: "json") {
+                let data = try Data(contentsOf: file)
+                let json = try JSONSerialization.jsonObject(with: data, options: [])
+                if let object = json as? [String: Any] {
+                    // json is a dictionary
+                    print(object)
+                } else if let object = json as? [Any] {
+                    // json is an array
+                    returnObject = object
+                } else {
+                    print("JSON is invalid")
+                }
+            } else {
+                print("no file")
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return returnObject
+    }
+
 }
 
