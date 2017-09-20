@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import Then
 import Speech
+import Alamofire
 
 @available(iOS 10.0, *)
 class ViewController: UIViewController {
@@ -27,11 +28,8 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .white
         self.title = "RadioPal"
         self.setupUI()
-        
-        self.micBtn.isEnabled = false
         self.speechRecognizer?.delegate = self
         self.requestAuthorization()
-        
     }
     
     private func setupUI() {
@@ -76,6 +74,8 @@ class ViewController: UIViewController {
                 make.top.equalTo(instructionsLabel.snp.bottom).offset(20)
             })
         }
+        self.micBtn.isEnabled = false
+
     }
     
     private func requestAuthorization() {
@@ -149,7 +149,7 @@ class ViewController: UIViewController {
             fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
         }
         
-        recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.shouldReportPartialResults = false
         
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
             
