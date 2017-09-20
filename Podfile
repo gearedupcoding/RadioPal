@@ -8,7 +8,8 @@ target 'RadioPal' do
   # Pods for RadioPal
   pod 'SnapKit', '~> 3.2.0'
   pod 'Then'
-#  pod 'SwiftyJSON'
+  pod 'Alamofire'
+  pod 'SwiftyJSON'
 
 
 end

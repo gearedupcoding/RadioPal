@@ -201,12 +201,11 @@ class ViewController: UIViewController {
 
 extension ViewController: SFSpeechRecognizerDelegate {
     func getGenres() {
-        print(readJson(name: "genres"))
-        //let json = JSON(parseJSON: jsonString!)
+        
     }
     
     func getCountries() {
-        
+            
     }
     
     private func readJson(name: String) -> [Any]? {
