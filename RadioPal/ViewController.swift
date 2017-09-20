@@ -69,9 +69,8 @@ class ViewController: UIViewController {
             $0.setImage(micImage, for: .normal)
             $0.addTarget(self, action: #selector(micBtnPressed(_:)), for: .touchUpInside)
             $0.snp.makeConstraints({ (make) in
-                make.centerX.equalTo(instructionsLabel)
+                make.centerY.equalTo(self.view)
                 make.height.width.equalTo((micImage?.size.width)!)
-                make.top.equalTo(instructionsLabel.snp.bottom).offset(20)
             })
         }
         self.micBtn.isEnabled = false
