@@ -9,6 +9,7 @@ target 'RadioPal' do
   pod ‘Alamofire’
   pod ‘AlamofireImage’
   pod 'SnapKit', '~> 3.2.0'
+  pod 'Then'
   
 
 end
