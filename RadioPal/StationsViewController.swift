@@ -17,7 +17,6 @@ class StationsViewController: UIViewController, JukeboxDelegate {
 
     init(stations: [StationModel]) {
         self.stations = stations
-        print(self.stations.count)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,13 +30,13 @@ class StationsViewController: UIViewController, JukeboxDelegate {
         // Do any additional setup after loading the view.
         
         // configure jukebox
-        jukebox = Jukebox(delegate: self, items: [
-            JukeboxItem(URL: URL(string: self.stations[0].streamStr!)!),
-            ])!
+//        jukebox = Jukebox(delegate: self, items: [
+//            JukeboxItem(URL: URL(string: self.stations[0].stream[0].stream),
+//            ])!
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.jukebox.play()
+        //self.jukebox.play()
     }
 
     func jukeboxDidLoadItem(_ jukebox: Jukebox, item: JukeboxItem) {

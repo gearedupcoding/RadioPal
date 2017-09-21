@@ -405,7 +405,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF1D6288D9743B61FA93917A /* Pods-RadioPal.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5QJ98N7ELZ;
 				INFOPLIST_FILE = RadioPal/Info.plist;
@@ -422,7 +422,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 94454098E7F419737857B3D3 /* Pods-RadioPal.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5QJ98N7ELZ;
 				INFOPLIST_FILE = RadioPal/Info.plist;

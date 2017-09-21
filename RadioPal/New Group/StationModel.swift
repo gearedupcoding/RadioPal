@@ -8,7 +8,48 @@
 
 import UIKit
 import SwiftyJSON
+
+
 /*
+ ▿ {
+ "total_listeners" : 81,
+ "name" : "Arabesk FM",
+ "updated_at" : "2017-09-18T02:29:00+02:00",
+ "website" : "http:\/\/www.arabeskfm.biz",
+ "twitter" : "fmarabesk",
+ "facebook" : "https:\/\/www.facebook.com\/fmarabesk",
+ "id" : 57401,
+ "categories" : [
+ {
+ "id" : 18,
+ "title" : "Classic Rock",
+ "slug" : "classic-rock",
+ "description" : "",
+ "ancestry" : "2"
+ }
+ ],
+ "streams" : [
+ {
+ "content_type" : "audio\/mpeg",
+ "status" : 1,
+ "listeners" : 81,
+ "stream" : "http:\/\/yayin.arabeskfm.biz:8042",
+ "bitrate" : 80
+ }
+ ],
+ "created_at" : "2017-09-18T02:28:58+02:00",
+ "image" : {
+ "url" : "https:\/\/img.dirble.com\/station\/57401\/ce32587e-5df9-41b4-99b7-19f4b0c39d37.jpg",
+ "thumb" : {
+ "url" : "https:\/\/img.dirble.com\/station\/57401\/thumb_ce32587e-5df9-41b4-99b7-19f4b0c39d37.jpg"
+ }
+ },
+ "slug" : "arabesk-fm-9c7d6baf-1b74-4d50-aded-83093a97746d",
+ "country" : "TR"
+ }
+ 
+ 
+ 
  {
  "id" : 57400,
  "total_listeners" : 0,
@@ -48,26 +89,31 @@ import SwiftyJSON
  */
 class StationModel: NSObject {
     var id: String?
+    var name: String?
     var total_listeners: Int?
     var created_at: Date?
     var slug: String?
     var updatedAt: String?
     var country: String?
     var stream = [StreamModel]()
-    var streamStr: String?
-    
-    init(json: (String, JSON)) {
-        let dict = json.1.dictionaryValue
-        self.id = dict["id"]?.rawString()
-        //self.id = json["id"].string
-        if let streamArr = dict["streams"] {
-            let streamObj = streamArr[0]
-            let streamStr = streamObj["stream"]
-            self.streamStr = streamStr.rawString()
+    var url: String?
+    var thumbUrl: String?
+
+    init(json: JSON) {
+        self.id = json["id"].string
+        if let streamArray = json["streams"].array {
+            for stream in streamArray {
+                let streamObj = StreamModel(json: stream)
+                self.stream.append(streamObj)
+            }
         }
-   
-        print(self.id)
-        print(self.streamStr)
+        if let imageDict = json["image"].dictionary {
+            self.url = imageDict["url"]?.string
+            if let thumbDict = imageDict["thumb"]?.dictionary {
+                self.thumbUrl = thumbDict["url"]?.string
+            }
+        }
+
     }
     
 }

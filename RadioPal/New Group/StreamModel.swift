@@ -17,7 +17,10 @@ class StreamModel: NSObject {
     var bitrate: Int?
     
     init(json: JSON) {
-        self.contentType = json["contentType"].string
+        self.contentType = json["content_type"].string
         self.stream = json["stream"].string
+        self.bitrate = json["bitrate"].int
+        self.status = json["status"].int
+        self.listeners = json["listeners"].int
     }
 }

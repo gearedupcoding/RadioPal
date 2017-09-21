@@ -15,7 +15,7 @@ import Alamofire
 
 @available(iOS 10.0, *)
 let token = "token=77c624783e5f4fe9af9e9c3bb3"
-class ViewController: UIViewController {
+class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
     var micBtn = UIButton(type: .custom)
     var genres = [GenreModel]()
@@ -24,6 +24,7 @@ class ViewController: UIViewController {
     var genresDict = [String: String]()
     var countriesDict = [String: String]()
     var recordedText = ""
+    var recognizedGenre = true
     
     //Speech Recognition
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -70,7 +71,7 @@ class ViewController: UIViewController {
             }
         }
         
-        let instructionsLabel = UILabel().then {
+        let _ = UILabel().then {
             self.view.addSubview($0)
             $0.numberOfLines = 0
             $0.textAlignment = .center
@@ -85,11 +86,16 @@ class ViewController: UIViewController {
             })
         }
         
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(micBtnPressed(_:))).then {
+            $0.cancelsTouchesInView = false
+            $0.minimumPressDuration = 0.01
+        }
+
         self.micBtn.do {
             self.view.addSubview($0)
             let micImage = UIImage(named: "mic")
             $0.setImage(micImage, for: .normal)
-            $0.addTarget(self, action: #selector(micBtnPressed(_:)), for: .touchUpInside)
+            $0.addGestureRecognizer(gesture)
             $0.snp.makeConstraints({ (make) in
                 make.centerX.equalTo(self.view)
                 make.height.width.equalTo((micImage?.size.width)!)
@@ -133,16 +139,32 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @objc func micBtnPressed(_ sender: UIButton) {
-        if audioEngine.isRunning {
+    @objc func micBtnPressed(_ sender: UILongPressGestureRecognizer) {
+        self.recognizedGenre = true
+        switch sender.state {
+        case .began:
+            startRecording()
+            micBtn.setTitle("Stop Recording", for: .normal)
+            
+        case .ended:
             audioEngine.stop()
             recognitionRequest?.endAudio()
             micBtn.isEnabled = false
             micBtn.setTitle("Start Recording", for: .normal)
-        } else {
-            startRecording()
-            micBtn.setTitle("Stop Recording", for: .normal)
+            
+        default:
+            break
         }
+        
+//        if audioEngine.isRunning {
+//            audioEngine.stop()
+//            recognitionRequest?.endAudio()
+//            micBtn.isEnabled = false
+//            micBtn.setTitle("Start Recording", for: .normal)
+//        } else {
+//            startRecording()
+//            micBtn.setTitle("Stop Recording", for: .normal)
+//        }
     }
 
     func startRecording() {
@@ -178,6 +200,7 @@ class ViewController: UIViewController {
             var isFinal = false
             
             if result != nil {
+                print(result?.bestTranscription.formattedString)
                 if let resultText = (result?.bestTranscription.formattedString) {
                     self.recordedText = resultText
                     self.search(recordedString: self.recordedText)
@@ -230,21 +253,37 @@ extension ViewController {
         let genreURL = "http://api.dirble.com/v2/category/\(genreId)/stations?"
         let url = genreURL + "\(token)"
         Alamofire.request(url, method: .get).validate().responseJSON { response in
-            switch response.result {
-            case .success(let value):
-                let json = JSON(value)
-                print("JSON: \(json)")
-            case .failure(let error):
-                print(error)
+            if self.recognizedGenre {
+                self.recognizedGenre = false
+                switch response.result {
+                case .success(let value):
+                    if let json = JSON(value).array {
+                        for jsonStation in json {
+                            let stationModel = StationModel(json: jsonStation)
+                            self.stations.append(stationModel)
+                        }
+                    }
+                    let vc = StationsViewController(stations: self.stations)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
     }
     
     func search(recordedString: String) {
-        if let genreid = self.genresDict[recordedString] {
-            self.searchForGenreStations(genreId: genreid)
-        } else if let countryCode = self.countriesDict[recordedString] {
-            self.searchForCountryStations(countryCode: countryCode)
+        //recorded string search in genres and countries
+        for genre in self.genres {
+            if let title = genre.title, title.contains(recordedString), let id = genre.id {
+                self.searchForGenreStations(genreId:"\(id)")
+            }
+        }
+        
+        for country in self.countries {
+            if let name = country.name, name.contains(recordedString), let code = country.code {
+                self.searchForCountryStations(countryCode: code)
+            }
         }
     }
     
@@ -254,16 +293,14 @@ extension ViewController {
         Alamofire.request(url, method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let value):
-                let json = JSON(value)
-                print(json[0])
-                print(json[0]["streams"])
-                for jsonCountry in json {
-                    let stationModel = StationModel(json: jsonCountry)
-                    self.stations.append(stationModel)
+                if let json = JSON(value).array {
+                    for jsonCountry in json {
+                        let stationModel = StationModel(json: jsonCountry)
+                        self.stations.append(stationModel)
+                    }
                 }
                 let vc = StationsViewController(stations: self.stations)
                 self.navigationController?.pushViewController(vc, animated: true)
-                
             case .failure(let error):
                 print(error)
             }
@@ -272,7 +309,7 @@ extension ViewController {
     
 }
 
-extension ViewController: SFSpeechRecognizerDelegate {
+extension ViewController {
     func getGenres() {
         if let path = Bundle.main.url(forResource: "genres", withExtension: "json"), let json = try? Data(contentsOf: path) {
             if let jsonArray = JSON.init(arrayLiteral: json).array, let json = jsonArray[0].array {
@@ -294,30 +331,5 @@ extension ViewController: SFSpeechRecognizerDelegate {
             }
         }
     }
-    
-    private func readJson(name: String) -> [Any]? {
-        var returnObject = [Any]()
-        do {
-            if let file = Bundle.main.url(forResource: name, withExtension: "json") {
-                let data = try Data(contentsOf: file)
-                let json = try JSONSerialization.jsonObject(with: data, options: [])
-                if let object = json as? [String: Any] {
-                    // json is a dictionary
-                    print(object)
-                } else if let object = json as? [Any] {
-                    // json is an array
-                    returnObject = object
-                } else {
-                    print("JSON is invalid")
-                }
-            } else {
-                print("no file")
-            }
-        } catch {
-            print(error.localizedDescription)
-        }
-        return returnObject
-    }
-
 }
 
