@@ -15,6 +15,9 @@
 		673E32801F731BBD0062333A /* GenreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E327F1F731BBD0062333A /* GenreModel.swift */; };
 		673E32841F7324340062333A /* countries.json in Resources */ = {isa = PBXBuildFile; fileRef = 673E32831F7323C40062333A /* countries.json */; };
 		673E32851F7324340062333A /* genres.json in Resources */ = {isa = PBXBuildFile; fileRef = 673E32821F7323C30062333A /* genres.json */; };
+		673E32871F7330260062333A /* StationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E32861F7330260062333A /* StationsViewController.swift */; };
+		673E32891F7330C50062333A /* StationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E32881F7330C50062333A /* StationModel.swift */; };
+		673E328B1F7331660062333A /* StreamModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E328A1F7331660062333A /* StreamModel.swift */; };
 		D49E25C55E194BD26FE5E2C6 /* Pods_RadioPal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +32,9 @@
 		673E327F1F731BBD0062333A /* GenreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreModel.swift; sourceTree = "<group>"; };
 		673E32821F7323C30062333A /* genres.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = genres.json; sourceTree = "<group>"; };
 		673E32831F7323C40062333A /* countries.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = countries.json; sourceTree = "<group>"; };
+		673E32861F7330260062333A /* StationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsViewController.swift; sourceTree = "<group>"; };
+		673E32881F7330C50062333A /* StationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationModel.swift; sourceTree = "<group>"; };
+		673E328A1F7331660062333A /* StreamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamModel.swift; sourceTree = "<group>"; };
 		94454098E7F419737857B3D3 /* Pods-RadioPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.release.xcconfig"; sourceTree = "<group>"; };
 		BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioPal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1D6288D9743B61FA93917A /* Pods-RadioPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.debug.xcconfig"; sourceTree = "<group>"; };
@@ -72,6 +78,7 @@
 				673E32811F731BC20062333A /* Models */,
 				673E326A1F72FA900062333A /* AppDelegate.swift */,
 				673E326C1F72FA900062333A /* ViewController.swift */,
+				673E32861F7330260062333A /* StationsViewController.swift */,
 				673E326E1F72FA900062333A /* Main.storyboard */,
 				673E32711F72FA900062333A /* Assets.xcassets */,
 				673E32731F72FA900062333A /* LaunchScreen.storyboard */,
@@ -84,6 +91,8 @@
 			isa = PBXGroup;
 			children = (
 				673E327F1F731BBD0062333A /* GenreModel.swift */,
+				673E32881F7330C50062333A /* StationModel.swift */,
+				673E328A1F7331660062333A /* StreamModel.swift */,
 			);
 			name = Models;
 			path = "New Group";
@@ -188,12 +197,14 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,7 +254,10 @@
 			files = (
 				673E32801F731BBD0062333A /* GenreModel.swift in Sources */,
 				673E326D1F72FA900062333A /* ViewController.swift in Sources */,
+				673E32891F7330C50062333A /* StationModel.swift in Sources */,
 				673E326B1F72FA900062333A /* AppDelegate.swift in Sources */,
+				673E32871F7330260062333A /* StationsViewController.swift in Sources */,
+				673E328B1F7331660062333A /* StreamModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,12 +10,20 @@ import UIKit
 import SnapKit
 import Then
 import Speech
+import SwiftyJSON
+import Alamofire
 
 @available(iOS 10.0, *)
+let token = "token=77c624783e5f4fe9af9e9c3bb3"
 class ViewController: UIViewController {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
     var micBtn = UIButton(type: .custom)
- 
+    var genres = [GenreModel]()
+    var stations = [StationModel]()
+    var genresDict = [String: String]()
+    var countriesDict = [String: String]()
+    var recordedText = ""
+    
     //Speech Recognition
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -30,6 +38,18 @@ class ViewController: UIViewController {
         self.speechRecognizer?.delegate = self
         self.requestAuthorization()
         self.getGenres()
+        
+        //Genres
+        genresDict["Rock"] = "2"
+        genresDict["Jazz"] = "12"
+        
+        //Countries
+        countriesDict["UK"] = "GB"
+        countriesDict["Germany"] = "DE"
+        countriesDict["US"] = "US"
+        
+        print(genresDict)
+        print(countriesDict)
     }
     
     private func setupUI() {
@@ -156,7 +176,10 @@ class ViewController: UIViewController {
             var isFinal = false
             
             if result != nil {
-                print(result?.bestTranscription.formattedString)
+                if let resultText = (result?.bestTranscription.formattedString) {
+                    self.recordedText = resultText
+                    self.search(recordedString: self.recordedText)
+                }
                 //self.textView.text = result?.bestTranscription.formattedString
                 isFinal = (result?.isFinal)!
             }
@@ -199,9 +222,65 @@ class ViewController: UIViewController {
 
 }
 
+extension ViewController {
+    //Alamofire
+    func searchForGenreStations(genreId: String) {
+        let genreURL = "http://api.dirble.com/v2/category/\(genreId)/stations?"
+        let url = genreURL + "\(token)"
+        Alamofire.request(url, method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                let json = JSON(value)
+                print("JSON: \(json)")
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    func search(recordedString: String) {
+        if let genreid = self.genresDict[recordedString] {
+            self.searchForGenreStations(genreId: genreid)
+        } else if let countryCode = self.countriesDict[recordedString] {
+            self.searchForCountryStations(countryCode: countryCode)
+        }
+    }
+    
+    func searchForCountryStations(countryCode: String) {
+        let countryURL = "http://api.dirble.com/v2/countries/\(countryCode)/stations?"
+        let url = countryURL + "\(token)"
+        Alamofire.request(url, method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                let json = JSON(value)
+                print(json[0])
+                print(json[0]["streams"])
+                for jsonCountry in json {
+                    let stationModel = StationModel(json: jsonCountry)
+                    self.stations.append(stationModel)
+                }
+                let vc = StationsViewController(stations: self.stations)
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+}
+
 extension ViewController: SFSpeechRecognizerDelegate {
     func getGenres() {
-        
+        if let path = Bundle.main.url(forResource: "genres", withExtension: "json"), let json = try? Data(contentsOf: path) {
+            let jsonArray = JSON.init(arrayLiteral: json)
+            for json in jsonArray[0] {
+                let genreJSON = json.1
+                let genre = GenreModel(json: genreJSON)
+                self.genres.append(genre)
+            }
+            print(self.genres.count)
+        }
     }
     
     func getCountries() {
