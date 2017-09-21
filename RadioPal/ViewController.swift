@@ -15,6 +15,7 @@ import Alamofire
 
 @available(iOS 10.0, *)
 let token = "token=77c624783e5f4fe9af9e9c3bb3"
+
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
     var micBtn = UIButton(type: .custom)
@@ -75,7 +76,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.view.addSubview($0)
             $0.numberOfLines = 0
             $0.textAlignment = .center
-            $0.text = "Click on mic icon to speak - Say a genre or country to list out the stations. Go ahead!"
+            $0.text = "Tap and hold on screen to say a genre or country to list out the stations. Go ahead!"
             $0.font = UIFont.systemFont(ofSize: 25)
             
             $0.snp.makeConstraints({ (make) in
@@ -84,6 +85,12 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 make.left.equalTo(self.view).offset(15)
                 make.right.equalTo(self.view).offset(-15)
             })
+        }
+        
+        _ = UILongPressGestureRecognizer(target: self, action: #selector(micBtnPressed(_:))).then {
+            $0.cancelsTouchesInView = false
+            $0.minimumPressDuration = 0.01
+            self.view.addGestureRecognizer($0)
         }
         
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(micBtnPressed(_:))).then {
@@ -264,6 +271,7 @@ extension ViewController {
                         }
                     }
                     let vc = StationsViewController(stations: self.stations)
+                    vc.delegate = self
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .failure(let error):
                     print(error)
@@ -307,6 +315,12 @@ extension ViewController {
         }
     }
     
+}
+
+extension ViewController: StationsViewControllerDelegate {
+    func clearStations() {
+        self.stations.removeAll()
+    }
 }
 
 extension ViewController {

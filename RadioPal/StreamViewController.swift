@@ -12,7 +12,7 @@ import Jukebox
 class StreamViewController: UIViewController, JukeboxDelegate {
     var station: StationModel?
     var index: Int?
-    var jukebox : Jukebox!
+    var jukebox : Jukebox?
 
     init(station: StationModel) {
         self.station = station
@@ -40,26 +40,29 @@ class StreamViewController: UIViewController, JukeboxDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         self.setupUI()
-        self.jukebox.play()
+        self.jukebox?.play()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.jukebox.stop()
+        self.jukebox?.stop()
     }
     
     private func setupUI() {
         let label = UILabel().then {
-            
             self.view.addSubview($0)
             $0.numberOfLines = 0
-            $0.textColor = .black
+            $0.textColor = .white
             $0.text = self.station?.name?.capitalized
             $0.font = UIFont.systemFont(ofSize: 30)
             
             $0.snp.makeConstraints { (make) in
-                make.center.equalTo(self.view)
+                make.top.equalTo(self.view)
+                make.left.equalTo(self.view).offset(15)
+                make.right.equalTo(self.view).offset(-15)
             }
         }
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -117,26 +120,7 @@ class StreamViewController: UIViewController, JukeboxDelegate {
     
     
     override func remoteControlReceived(with event: UIEvent?) {
-        if event?.type == .remoteControl {
-            switch event!.subtype {
-            case .remoteControlPlay :
-                jukebox.play()
-            case .remoteControlPause :
-                jukebox.pause()
-            case .remoteControlNextTrack :
-                jukebox.playNext()
-            case .remoteControlPreviousTrack:
-                jukebox.playPrevious()
-            case .remoteControlTogglePlayPause:
-                if jukebox.state == .playing {
-                    jukebox.pause()
-                } else {
-                    jukebox.play()
-                }
-            default:
-                break
-            }
-        }
+
     }
 
 }

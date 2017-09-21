@@ -9,12 +9,17 @@
 import UIKit
 import MediaPlayer
 
+protocol StationsViewControllerDelegate : class {
+    func clearStations()
+}
+
 class StationsViewController: UIViewController {
 
     var stations = [StationModel]()
     var pageViewController: UIPageViewController
     var streamsVC = [StreamViewController]()
-    
+    weak var delegate: StationsViewControllerDelegate?
+
     init(stations: [StationModel]) {
         self.stations = stations
         var index = 0
@@ -57,6 +62,7 @@ class StationsViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        self.delegate?.clearStations()
         self.stations.removeAll()
         self.streamsVC.removeAll()
     }
