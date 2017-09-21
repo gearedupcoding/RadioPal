@@ -8,15 +8,25 @@
 
 import UIKit
 import Jukebox
+import Alamofire
+protocol StreamViewControllerDelegate: class {
+    func setTitle(str: String)
+}
 
 class StreamViewController: UIViewController, JukeboxDelegate {
     var station: StationModel?
     var index: Int?
     var jukebox : Jukebox?
-
+    var image: UIImage?
+    var slideLabel = UILabel()
+    var imageView = UIImageView()
+    var isPaused = false
+    var isStopped = false
+    weak var delegate: StreamViewControllerDelegate?
+    
     init(station: StationModel) {
-        self.station = station
         super.init(nibName: nil, bundle: nil)
+        self.station = station
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -25,21 +35,25 @@ class StreamViewController: UIViewController, JukeboxDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        self.view.backgroundColor = .cyan
-        // configure jukebox
         
+        // Do any additional setup after loading the view.
+        self.view.backgroundColor = .lightGray
+        // configure jukebox
+        self.delegate?.setTitle(str:"Tuning...")
         if let station = self.station, let streamStr = station.stream[0].stream,
             let urlStr =  URL(string: streamStr) {
             jukebox = Jukebox(delegate: self, items: [
                 JukeboxItem(URL: urlStr)
                 ])
         }
+        
+        self.setupUI()
+    
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.setupUI()
+        self.slideLabel.isHidden = true
         self.jukebox?.play()
     }
     
@@ -48,21 +62,84 @@ class StreamViewController: UIViewController, JukeboxDelegate {
     }
     
     private func setupUI() {
+
+        let pauseView = UIView().then {
+            self.view.addSubview($0)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pause(_:)))
+            $0.addGestureRecognizer(tapGesture)
+            $0.snp.makeConstraints({ (make) in
+                make.top.left.right.equalTo(self.view)
+                make.height.equalTo(self.view).dividedBy(2)
+            })
+        }
+        
+        let stopView = UIView().then {
+            self.view.addSubview($0)
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(stop(_:)))
+            $0.addGestureRecognizer(tapGesture)
+            $0.snp.makeConstraints({ (make) in
+                make.bottom.left.right.equalTo(self.view)
+                make.height.equalTo(self.view).dividedBy(2)
+            })
+        }
+        
+        
         let label = UILabel().then {
             self.view.addSubview($0)
             $0.numberOfLines = 0
-            $0.textColor = .white
+            $0.textColor = .black
             $0.text = self.station?.name?.capitalized
             $0.font = UIFont.systemFont(ofSize: 30)
+            self.view.bringSubview(toFront: $0)
+            $0.textAlignment = .center
             
             $0.snp.makeConstraints { (make) in
-                make.top.equalTo(self.view)
+                make.center.equalTo(self.view)
                 make.left.equalTo(self.view).offset(15)
                 make.right.equalTo(self.view).offset(-15)
             }
         }
         
-        
+        let slideLabel = UILabel().then {
+            self.view.addSubview($0)
+            $0.numberOfLines = 0
+            $0.textColor = .black
+            $0.text = "<-- Slide to change -->"
+            $0.font = UIFont.systemFont(ofSize: 30)
+            $0.textAlignment = .center
+            self.view.bringSubview(toFront: $0)
+            
+            $0.snp.makeConstraints { (make) in
+                make.left.equalTo(self.view).offset(15)
+                make.right.equalTo(self.view).offset(-15)
+                make.bottom.equalTo(self.view).offset(-15)
+            }
+        }
+    }
+    
+    @objc func pause(_ sender: UITapGestureRecognizer) {
+        if self.isPaused {
+            self.delegate?.setTitle(str:"Playing...")
+            self.jukebox?.play()
+            self.isPaused = false
+            return
+        }
+        self.delegate?.setTitle(str:"Paused...")
+        self.isPaused = true
+        self.jukebox?.pause()
+    }
+    
+    @objc func stop(_ sender: UITapGestureRecognizer) {
+        if self.isStopped {
+            self.delegate?.setTitle(str:"Playing...")
+            self.jukebox?.play()
+            self.isStopped = false
+            return
+        }
+        self.delegate?.setTitle(str:"Stopped...")
+        self.isStopped = true
+        self.jukebox?.stop()
     }
 
     override func didReceiveMemoryWarning() {
@@ -72,46 +149,16 @@ class StreamViewController: UIViewController, JukeboxDelegate {
     
 
     func jukeboxDidLoadItem(_ jukebox: Jukebox, item: JukeboxItem) {
+        self.delegate?.setTitle(str:"Playing...")
         print("Jukebox did load: \(item.URL.lastPathComponent)")
     }
     
     func jukeboxPlaybackProgressDidChange(_ jukebox: Jukebox) {
-        
-        if let currentTime = jukebox.currentItem?.currentTime, let duration = jukebox.currentItem?.meta.duration {
-            let value = Float(currentTime / duration)
-            //            slider.value = value
-            //            populateLabelWithTime(currentTimeLabel, time: currentTime)
-            //            populateLabelWithTime(durationLabel, time: duration)
-        } else {
-            //resetUI()
-        }
+
     }
     
     func jukeboxStateDidChange(_ jukebox: Jukebox) {
-        
-        UIView.animate(withDuration: 0.3, animations: { () -> Void in
-            //            self.indicator.alpha = jukebox.state == .loading ? 1 : 0
-            //            self.playPauseButton.alpha = jukebox.state == .loading ? 0 : 1
-            //            self.playPauseButton.isEnabled = jukebox.state == .loading ? false : true
-        })
-        
-        if jukebox.state == .ready {
-            // playPauseButton.setImage(UIImage(named: "playBtn"), for: UIControlState())
-        } else if jukebox.state == .loading  {
-            // playPauseButton.setImage(UIImage(named: "pauseBtn"), for: UIControlState())
-        } else {
-            // volumeSlider.value = jukebox.volume
-            let imageName: String
-            switch jukebox.state {
-            case .playing, .loading:
-                imageName = "pauseBtn"
-            case .paused, .failed, .ready:
-                imageName = "playBtn"
-            }
-            //playPauseButton.setImage(UIImage(named: imageName), for: UIControlState())
-        }
-        
-        print("Jukebox state changed to \(jukebox.state)")
+    
     }
     
     func jukeboxDidUpdateMetadata(_ jukebox: Jukebox, forItem: JukeboxItem) {

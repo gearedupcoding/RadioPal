@@ -11,5 +11,6 @@ target 'RadioPal' do
   pod 'Alamofire'
   pod 'SwiftyJSON'
   pod 'Jukebox'
-
+  pod 'AlamofireImage'
+  
 end

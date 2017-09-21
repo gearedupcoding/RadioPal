@@ -16,23 +16,23 @@ protocol StationsViewControllerDelegate : class {
 class StationsViewController: UIViewController {
 
     var stations = [StationModel]()
-    var pageViewController: UIPageViewController
+    var pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     var streamsVC = [StreamViewController]()
     weak var delegate: StationsViewControllerDelegate?
 
     init(stations: [StationModel]) {
+        super.init(nibName: nil, bundle: nil)
         self.stations = stations
         var index = 0
         for station in self.stations {
             let streamVC = StreamViewController(station: station)
+            streamVC.delegate = self
             streamVC.index = index
             print(station.name)
             self.streamsVC.append(streamVC)
             index += 1
         }
         print(self.stations.count)
-        self.pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -45,7 +45,6 @@ class StationsViewController: UIViewController {
         self.view.backgroundColor = .white
         self.pageViewController.do {
             $0.dataSource = self
-            $0.view.backgroundColor = .green
             if let streamVC = self.streamsVC.first {
                 let arr = [streamVC]
                 $0.setViewControllers(arr, direction: .forward, animated: true, completion: nil)
@@ -61,7 +60,12 @@ class StationsViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.delegate?.clearStations()
         self.stations.removeAll()
         self.streamsVC.removeAll()
@@ -116,6 +120,12 @@ extension StationsViewController: UIPageViewControllerDataSource {
         }
         
         return self.streamsVC[prevIndex]
+    }
+}
+
+extension StationsViewController: StreamViewControllerDelegate {
+    func setTitle(str: String) {
+        self.title = str
     }
 }
 //

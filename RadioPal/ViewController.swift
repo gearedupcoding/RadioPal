@@ -12,6 +12,7 @@ import Then
 import Speech
 import SwiftyJSON
 import Alamofire
+import AVFoundation
 
 @available(iOS 10.0, *)
 let token = "token=77c624783e5f4fe9af9e9c3bb3"
@@ -35,13 +36,14 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .lightGray
         self.title = "RadioPal"
         self.setupUI()
         self.speechRecognizer?.delegate = self
         self.requestAuthorization()
         self.getGenres()
         self.getCountries()
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         
         //Genres
         genresDict["Rock"] = "2"
@@ -72,21 +74,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             }
         }
         
-        let _ = UILabel().then {
-            self.view.addSubview($0)
-            $0.numberOfLines = 0
-            $0.textAlignment = .center
-            $0.text = "Tap and hold on screen to say a genre or country to list out the stations. Go ahead!"
-            $0.font = UIFont.systemFont(ofSize: 25)
-            
-            $0.snp.makeConstraints({ (make) in
-                make.centerX.equalTo(label)
-                make.top.equalTo(label.snp.bottom).offset(10)
-                make.left.equalTo(self.view).offset(15)
-                make.right.equalTo(self.view).offset(-15)
-            })
-        }
-        
         _ = UILongPressGestureRecognizer(target: self, action: #selector(micBtnPressed(_:))).then {
             $0.cancelsTouchesInView = false
             $0.minimumPressDuration = 0.01
@@ -97,7 +84,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             $0.cancelsTouchesInView = false
             $0.minimumPressDuration = 0.01
         }
-
+        
         self.micBtn.do {
             self.view.addSubview($0)
             let micImage = UIImage(named: "mic")
@@ -110,7 +97,21 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             })
         }
         self.micBtn.isEnabled = false
-
+        
+        let _ = UILabel().then {
+            self.view.addSubview($0)
+            $0.numberOfLines = 0
+            $0.textAlignment = .center
+            $0.text = "Tap and hold on screen to say a genre or country to listen to stations. Go ahead!"
+            $0.font = UIFont.systemFont(ofSize: 25)
+            
+            $0.snp.makeConstraints({ (make) in
+                make.centerX.equalTo(label)
+                make.bottom.equalTo(self.micBtn.snp.top).offset(-100)
+                make.left.equalTo(self.view).offset(15)
+                make.right.equalTo(self.view).offset(-15)
+            })
+        }
     }
     
     private func requestAuthorization() {
@@ -211,8 +212,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 if let resultText = (result?.bestTranscription.formattedString) {
                     self.recordedText = resultText
                     self.search(recordedString: self.recordedText)
+                } else {
+                    self.notFound()
                 }
-                //self.textView.text = result?.bestTranscription.formattedString
                 isFinal = (result?.isFinal)!
             }
             
@@ -255,6 +257,32 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 }
 
 extension ViewController {
+    func notFound() {
+        
+        let str = "Unable to find the station" //just some string here, this string exists, and it's in english
+        let synth = AVSpeechSynthesizer()
+        synth.delegate = self
+        let utterance = AVSpeechUtterance(string: str)
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        let lang = "en-US"
+        
+        utterance.voice = AVSpeechSynthesisVoice(language: lang)
+        synth.speak(utterance)
+    }
+}
+
+extension ViewController: AVSpeechSynthesizerDelegate {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        print("cancel")
+    }
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        print("start")
+    }
+    
+}
+
+extension ViewController {
     //Alamofire
     func searchForGenreStations(genreId: String) {
         let genreURL = "http://api.dirble.com/v2/category/\(genreId)/stations?"
@@ -285,14 +313,18 @@ extension ViewController {
         for genre in self.genres {
             if let title = genre.title, title.contains(recordedString), let id = genre.id {
                 self.searchForGenreStations(genreId:"\(id)")
+                return
             }
         }
         
         for country in self.countries {
             if let name = country.name, name.contains(recordedString), let code = country.code {
                 self.searchForCountryStations(countryCode: code)
+                return
             }
         }
+        
+        self.notFound()
     }
     
     func searchForCountryStations(countryCode: String) {

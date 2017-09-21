@@ -96,7 +96,7 @@ class StationModel: NSObject {
     var updatedAt: String?
     var country: String?
     var stream = [StreamModel]()
-    var url: String?
+    var imageUrl: String?
     var thumbUrl: String?
 
     init(json: JSON) {
@@ -109,7 +109,7 @@ class StationModel: NSObject {
             }
         }
         if let imageDict = json["image"].dictionary {
-            self.url = imageDict["url"]?.string
+            self.imageUrl = imageDict["url"]?.string
             if let thumbDict = imageDict["thumb"]?.dictionary {
                 self.thumbUrl = thumbDict["url"]?.string
             }
