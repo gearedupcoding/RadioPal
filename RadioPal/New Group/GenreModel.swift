@@ -10,19 +10,18 @@ import Foundation
 import SwiftyJSON
 
 class GenreModel {
-    var id: String?
+    var id: Int?
     var title: String?
     var description: String?
     var slug: String?
-    var ancestry: Int?
+    var ancestry: String?
     
     init(json: JSON) {
-        //let dictionary = json.raw
-//        self.id = json["id"].string
-//        self.title = json["title"].string
-//        self.description = json["description"].string
-//        self.slug = json["slug"].string
-//        self.ancestry = json["ancestry"].string
+        self.id = json["id"].int
+        self.title = json["title"].string
+        self.description = json["description"].string
+        self.slug = json["slug"].string
+        self.ancestry = json["ancestry"].string
     }
     
 }

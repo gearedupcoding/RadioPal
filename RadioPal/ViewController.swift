@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
     var micBtn = UIButton(type: .custom)
     var genres = [GenreModel]()
+    var countries = [CountryModel]()
     var stations = [StationModel]()
     var genresDict = [String: String]()
     var countriesDict = [String: String]()
@@ -38,6 +39,7 @@ class ViewController: UIViewController {
         self.speechRecognizer?.delegate = self
         self.requestAuthorization()
         self.getGenres()
+        self.getCountries()
         
         //Genres
         genresDict["Rock"] = "2"
@@ -273,18 +275,24 @@ extension ViewController {
 extension ViewController: SFSpeechRecognizerDelegate {
     func getGenres() {
         if let path = Bundle.main.url(forResource: "genres", withExtension: "json"), let json = try? Data(contentsOf: path) {
-            let jsonArray = JSON.init(arrayLiteral: json)
-            for json in jsonArray[0] {
-                let genreJSON = json.1
-                let genre = GenreModel(json: genreJSON)
-                self.genres.append(genre)
+            if let jsonArray = JSON.init(arrayLiteral: json).array, let json = jsonArray[0].array {
+                for genreJSON in json {
+                    let genre = GenreModel(json: genreJSON)
+                    self.genres.append(genre)
+                }
             }
-            print(self.genres.count)
         }
     }
     
     func getCountries() {
-            
+        if let path = Bundle.main.url(forResource: "countries", withExtension: "json"), let json = try? Data(contentsOf: path) {
+            if let jsonArray = JSON.init(arrayLiteral: json).array, let json = jsonArray[0].array {
+                for countryJSON in json {
+                    let country = CountryModel(json: countryJSON)
+                    self.countries.append(country)
+                }
+            }
+        }
     }
     
     private func readJson(name: String) -> [Any]? {

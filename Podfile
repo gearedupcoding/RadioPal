@@ -10,6 +10,6 @@ target 'RadioPal' do
   pod 'Then'
   pod 'Alamofire'
   pod 'SwiftyJSON'
-
+  pod 'Jukebox'
 
 end
