@@ -8,15 +8,25 @@
 
 import UIKit
 import MediaPlayer
-import Jukebox
 
-class StationsViewController: UIViewController, JukeboxDelegate {
+class StationsViewController: UIViewController {
 
     var stations = [StationModel]()
-    var jukebox : Jukebox!
-
+    var pageViewController: UIPageViewController
+    var streamsVC = [StreamViewController]()
+    
     init(stations: [StationModel]) {
         self.stations = stations
+        var index = 0
+        for station in self.stations {
+            let streamVC = StreamViewController(station: station)
+            streamVC.index = index
+            print(station.name)
+            self.streamsVC.append(streamVC)
+            index += 1
+        }
+        print(self.stations.count)
+        self.pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -26,104 +36,90 @@ class StationsViewController: UIViewController, JukeboxDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
         // Do any additional setup after loading the view.
-        
-        // configure jukebox
-//        jukebox = Jukebox(delegate: self, items: [
-//            JukeboxItem(URL: URL(string: self.stations[0].stream[0].stream),
-//            ])!
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        //self.jukebox.play()
-    }
-
-    func jukeboxDidLoadItem(_ jukebox: Jukebox, item: JukeboxItem) {
-        print("Jukebox did load: \(item.URL.lastPathComponent)")
-    }
-    
-    func jukeboxPlaybackProgressDidChange(_ jukebox: Jukebox) {
-        
-        if let currentTime = jukebox.currentItem?.currentTime, let duration = jukebox.currentItem?.meta.duration {
-            let value = Float(currentTime / duration)
-//            slider.value = value
-//            populateLabelWithTime(currentTimeLabel, time: currentTime)
-//            populateLabelWithTime(durationLabel, time: duration)
-        } else {
-            //resetUI()
-        }
-    }
-    
-    func jukeboxStateDidChange(_ jukebox: Jukebox) {
-        
-        UIView.animate(withDuration: 0.3, animations: { () -> Void in
-//            self.indicator.alpha = jukebox.state == .loading ? 1 : 0
-//            self.playPauseButton.alpha = jukebox.state == .loading ? 0 : 1
-//            self.playPauseButton.isEnabled = jukebox.state == .loading ? false : true
-        })
-        
-        if jukebox.state == .ready {
-           // playPauseButton.setImage(UIImage(named: "playBtn"), for: UIControlState())
-        } else if jukebox.state == .loading  {
-           // playPauseButton.setImage(UIImage(named: "pauseBtn"), for: UIControlState())
-        } else {
-           // volumeSlider.value = jukebox.volume
-            let imageName: String
-            switch jukebox.state {
-            case .playing, .loading:
-                imageName = "pauseBtn"
-            case .paused, .failed, .ready:
-                imageName = "playBtn"
+        self.view.backgroundColor = .white
+        self.pageViewController.do {
+            $0.dataSource = self
+            $0.view.backgroundColor = .green
+            if let streamVC = self.streamsVC.first {
+                let arr = [streamVC]
+                $0.setViewControllers(arr, direction: .forward, animated: true, completion: nil)
             }
-            //playPauseButton.setImage(UIImage(named: imageName), for: UIControlState())
+            self.addChildViewController($0)
+            self.view.addSubview($0.view)
+            $0.didMove(toParentViewController: self)
+            
+            $0.view.snp.makeConstraints({ (make) in
+                make.top.equalTo(topLayoutGuide.snp.bottom)
+                make.left.right.bottom.equalTo(self.view)
+            })
         }
-        
-        print("Jukebox state changed to \(jukebox.state)")
     }
     
-    func jukeboxDidUpdateMetadata(_ jukebox: Jukebox, forItem: JukeboxItem) {
-        print("Item updated:\n\(forItem)")
-    }
-    
-    
-    override func remoteControlReceived(with event: UIEvent?) {
-        if event?.type == .remoteControl {
-            switch event!.subtype {
-            case .remoteControlPlay :
-                jukebox.play()
-            case .remoteControlPause :
-                jukebox.pause()
-            case .remoteControlNextTrack :
-                jukebox.playNext()
-            case .remoteControlPreviousTrack:
-                jukebox.playPrevious()
-            case .remoteControlTogglePlayPause:
-                if jukebox.state == .playing {
-                    jukebox.pause()
-                } else {
-                    jukebox.play()
-                }
-            default:
-                break
-            }
-        }
+    override func viewWillDisappear(_ animated: Bool) {
+        self.stations.removeAll()
+        self.streamsVC.removeAll()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
+
+extension StationsViewController: UIPageViewControllerDataSource {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        
+        guard let index = self.streamsVC.index(of: (viewController as? StreamViewController)!) else {
+            return nil
+        }
+        
+        let nextIndex = index + 1
+        
+        guard self.streamsVC.count != nextIndex else {
+            if let firstVC = self.streamsVC.first {
+                return firstVC
+            }
+            return nil
+        }
+        
+        guard  self.streamsVC.count > nextIndex else {
+            return nil
+        }
+        
+        return self.streamsVC[nextIndex]
+    }
+
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let index = self.streamsVC.index(of: (viewController as? StreamViewController)!) else {
+            return nil
+        }
+        
+        let prevIndex = index - 1
+        
+        guard prevIndex >= 0 else {
+            if let lastVC = self.streamsVC.last {
+                return lastVC
+            }
+            return nil
+        }
+        
+        guard self.streamsVC.count > prevIndex else {
+            return nil
+        }
+        
+        return self.streamsVC[prevIndex]
+    }
+}
+//
+//extension StationsViewController: UIPageViewControllerDelegate {
+//    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+//
+//    }
+//
+//    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+//
+//    }
+//}
+

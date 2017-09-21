@@ -19,6 +19,7 @@
 		673E32891F7330C50062333A /* StationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E32881F7330C50062333A /* StationModel.swift */; };
 		673E328B1F7331660062333A /* StreamModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E328A1F7331660062333A /* StreamModel.swift */; };
 		673E328F1F7377190062333A /* CountryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673E328E1F7377180062333A /* CountryModel.swift */; };
+		676ABBFF1F7395BB009229D0 /* StreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676ABBFE1F7395BB009229D0 /* StreamViewController.swift */; };
 		D49E25C55E194BD26FE5E2C6 /* Pods_RadioPal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		673E32881F7330C50062333A /* StationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationModel.swift; sourceTree = "<group>"; };
 		673E328A1F7331660062333A /* StreamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamModel.swift; sourceTree = "<group>"; };
 		673E328E1F7377180062333A /* CountryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryModel.swift; sourceTree = "<group>"; };
+		676ABBFE1F7395BB009229D0 /* StreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamViewController.swift; sourceTree = "<group>"; };
 		94454098E7F419737857B3D3 /* Pods-RadioPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.release.xcconfig"; sourceTree = "<group>"; };
 		BCFD0FE1C88B4B8001B58B73 /* Pods_RadioPal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioPal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1D6288D9743B61FA93917A /* Pods-RadioPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioPal/Pods-RadioPal.debug.xcconfig"; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				673E326A1F72FA900062333A /* AppDelegate.swift */,
 				673E326C1F72FA900062333A /* ViewController.swift */,
 				673E32861F7330260062333A /* StationsViewController.swift */,
+				676ABBFE1F7395BB009229D0 /* StreamViewController.swift */,
 				673E326E1F72FA900062333A /* Main.storyboard */,
 				673E32711F72FA900062333A /* Assets.xcassets */,
 				673E32731F72FA900062333A /* LaunchScreen.storyboard */,
@@ -262,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				676ABBFF1F7395BB009229D0 /* StreamViewController.swift in Sources */,
 				673E328F1F7377190062333A /* CountryModel.swift in Sources */,
 				673E32801F731BBD0062333A /* GenreModel.swift in Sources */,
 				673E326D1F72FA900062333A /* ViewController.swift in Sources */,

@@ -101,6 +101,7 @@ class StationModel: NSObject {
 
     init(json: JSON) {
         self.id = json["id"].string
+        self.name = json["name"].string
         if let streamArray = json["streams"].array {
             for stream in streamArray {
                 let streamObj = StreamModel(json: stream)
